@@ -14,10 +14,13 @@ Route::get('/', function () {
 //Siapa saja bisa melihat daftar ternak (Read)
 Route::get('/livestocks', [LivestockController::class, 'index'])->name('livestocks.index');
 
-//Hanya yang sudah LOGIN yang bisa menambah data (Create/Store)
+// Hanya yang sudah LOGIN yang bisa Create, Update, Delete
 Route::middleware('auth')->group(function () {
     Route::post('/livestocks', [LivestockController::class, 'store'])->name('livestocks.store');
-    
+    Route::get('/livestocks/{livestock}/edit', [LivestockController::class, 'edit'])->name('livestocks.edit');
+    Route::put('/livestocks/{livestock}', [LivestockController::class, 'update'])->name('livestocks.update');
+    Route::delete('/livestocks/{livestock}', [LivestockController::class, 'destroy'])->name('livestocks.destroy');
+
     // Rute bawaan Breeze untuk Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

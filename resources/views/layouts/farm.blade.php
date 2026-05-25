@@ -51,12 +51,12 @@
                                 </button>
                             </form>
                         @else
-                            <a href="{{ route('login') }}" class="text-sm font-medium text-green-100 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/10 transition">Masuk</a>
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}" class="text-sm font-medium bg-amber-500/90 hover:bg-amber-400 text-green-950 px-4 py-1.5 rounded-lg transition shadow-sm">
                                     Daftar
                                 </a>
                             @endif
+                            <a href="{{ route('login') }}" class="text-sm font-medium text-green-100 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/10 transition">Masuk</a>
                         @endauth
                     </nav>
                 </div>

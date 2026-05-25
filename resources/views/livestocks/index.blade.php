@@ -17,7 +17,11 @@
                     Daftar Ternak
                 </h1>
                 <p class="mt-2 text-stone-600 max-w-xl">
-                    Kelola inventaris hewan ternak peternakan <span class="font-semibold text-green-800">Muhammad Rasya</span>! <br>pantau nama, jenis, dan berat setiap ekor.
+                    @auth
+                        Kelola inventaris hewan ternak peternakan <span class="font-semibold text-green-800">{{ Auth::user()->name }}</span> — pantau nama, jenis, dan berat setiap ekor.
+                    @else
+                        Lihat daftar hewan ternak peternakan — login untuk menambah, mengubah, dan menghapus data.
+                    @endauth
                 </p>
             </div>
 
@@ -61,6 +65,9 @@
                         <th class="px-6 py-3.5 font-semibold">Nama</th>
                         <th class="px-6 py-3.5 font-semibold">Jenis</th>
                         <th class="px-6 py-3.5 font-semibold text-right">Berat</th>
+                        @auth
+                            <th class="px-6 py-3.5 font-semibold text-center">Aksi</th>
+                        @endauth
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-green-50">
@@ -84,10 +91,43 @@
                             <td class="px-6 py-4 text-right font-semibold text-stone-700">
                                 {{ $animal->weight }} <span class="text-stone-400 font-normal text-sm">kg</span>
                             </td>
+                            @auth
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a
+                                            href="{{ route('livestocks.edit', $animal) }}"
+                                            class="inline-flex items-center gap-1 rounded-lg bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-200 transition"
+                                        >
+                                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            Ubah
+                                        </a>
+                                        <form
+                                            action="{{ route('livestocks.destroy', $animal) }}"
+                                            method="POST"
+                                            class="inline"
+                                            onsubmit="return confirm('Yakin ingin menghapus data ternak ini?')"
+                                        >
+                                            @csrf
+                                            @method('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="inline-flex items-center gap-1 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-200 transition"
+                                            >
+                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            @endauth
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-12 text-center">
+                            <td colspan="{{ auth()->check() ? 4 : 3 }}" class="px-6 py-12 text-center">
                                 <svg class="mx-auto h-12 w-12 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                                 </svg>
@@ -187,17 +227,27 @@
                 </span>
                 <h3 class="text-lg font-semibold text-green-900">Akses Terbatas</h3>
                 <p class="mt-2 text-stone-600 text-sm">
-                    Silakan masuk ke akun Anda untuk menambah, mengubah, atau menghapus data ternak.
+                    Belum punya akun? Daftar terlebih dahulu, lalu masuk untuk menambah dan mengelola data ternak.
                 </p>
-                <a
-                    href="{{ route('login') }}"
-                    class="mt-5 inline-flex items-center gap-2 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-800 transition shadow-sm"
-                >
-                    Login Sekarang
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                    </svg>
-                </a>
+                <div class="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+                    @if (Route::has('register'))
+                        <a
+                            href="{{ route('register') }}"
+                            class="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-green-950 hover:bg-amber-400 transition shadow-sm w-full sm:w-auto justify-center"
+                        >
+                            Daftar Akun
+                        </a>
+                    @endif
+                    <a
+                        href="{{ route('login') }}"
+                        class="inline-flex items-center gap-2 rounded-lg bg-green-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-800 transition shadow-sm w-full sm:w-auto justify-center"
+                    >
+                        Masuk
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
         </section>
     @endauth

@@ -40,7 +40,8 @@
 
             <div class="mt-6 flex flex-wrap justify-end gap-3">
                 <x-secondary-button
-                    x-on:click="$dispatch('close')"
+                    type="button"
+                    x-on:click="$dispatch('close-modal', 'confirm-user-deletion')"
                     class="!border-stone-300 !text-stone-700 hover:!bg-stone-50 !normal-case !tracking-normal !text-sm !rounded-lg"
                 >
                     Batal

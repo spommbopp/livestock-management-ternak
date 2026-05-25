@@ -1,73 +1,56 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Livestock;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class LivestockController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-public function index()
-{
-    $livestocks = Livestock::all();
-    // Di sini tambahkan 's' pada nama folder view-nya
-    return view('livestocks.index', compact('livestocks')); 
-}
-
-public function store(Request $request)
-{
-    // Validasi input 
-    $request->validate([
-        'name' => 'required',
-        'type' => 'required',
-        'weight' => 'required|numeric',
-    ]);
-
-    // Simpan data ke database melalui Model [cite: 34, 35]
-    Livestock::create($request->all());
-
-    return redirect()->route('livestocks.index')->with('success', 'Data berhasil ditambahkan!');
-}
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(): View
     {
-        //
+        $livestocks = Livestock::latest()->get();
+
+        return view('livestocks.index', compact('livestocks'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'weight' => 'required|numeric|min:1',
+        ]);
+
+        Livestock::create($validated);
+
+        return redirect()->route('livestocks.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Livestock $livestock): View
     {
-        //
+        return view('livestocks.edit', compact('livestock'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Livestock $livestock): RedirectResponse
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'weight' => 'required|numeric|min:1',
+        ]);
+
+        $livestock->update($validated);
+
+        return redirect()->route('livestocks.index')->with('success', 'Data berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Livestock $livestock): RedirectResponse
     {
-        //
+        $livestock->delete();
+
+        return redirect()->route('livestocks.index')->with('success', 'Data ternak berhasil dihapus!');
     }
 }
